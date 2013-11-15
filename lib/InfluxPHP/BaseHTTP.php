@@ -53,9 +53,9 @@ class BaseHTTP
         $this->host   = $c->host;
     }
 
-    protected function getCurl($url, Array $args = [])
+    protected function getCurl($url, Array $args = array())
     {
-        $args = array_merge($args, ['u' => $this->user, 'p' => $this->pass]);
+        $args = array_merge($args, array('u' => $this->user, 'p' => $this->pass));
         $url  = "http://{$this->host}:{$this->port}/{$this->base}{$url}";
         $url .= "?" . http_build_query($args);
         $ch   = curl_init($url);
@@ -78,14 +78,14 @@ class BaseHTTP
     protected function delete($url)
     {
         $ch = $this->getCurl($url);
-        curl_setopt_array($ch, [
+        curl_setopt_array($ch, array(
             CURLOPT_CUSTOMREQUEST => "DELETE",
-        ]);
+        ));
 
         return $this->execCurl($ch);
     }
 
-    protected function get($url, Array $args = [])
+    protected function get($url, Array $args = array())
     {
         $ch = $this->getCurl($url, $args);
         return $this->execCurl($ch, true);
@@ -94,10 +94,10 @@ class BaseHTTP
     protected function post($url, Array $body)
     {
         $ch = $this->getCurl($url);
-        curl_setopt_array($ch, [
+        curl_setopt_array($ch, array(
             CURLOPT_POST =>  1,
             CURLOPT_POSTFIELDS => json_encode($body),
-        ]);
+        ));
 
         return $this->execCurl($ch);
     }

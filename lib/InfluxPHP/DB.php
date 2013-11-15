@@ -62,17 +62,17 @@ class DB extends BaseHTTP
 
     public function insert($name, Array $data)
     {
-        $points = [];
+        $points = array();
         $first  = current($data);
         if (!is_array($first)) {
-            return $this->insert($name, [$data]);
+            return $this->insert($name, array($data));
         }
         $columns = array_keys($first);
         foreach ($data as $value) {
             $points[] = array_values($value);
         }
         $body = compact('name', 'columns', 'points');
-        return $this->post('series', [$body]);
+        return $this->post('series', array($body));
     }
 
     public function first($sql)
@@ -82,7 +82,7 @@ class DB extends BaseHTTP
 
     public function query($sql)
     {
-        return new Cursor($this->get('series', ['q' => $sql]));
+        return new Cursor($this->get('series', array('q' => $sql)));
     }
 
     public function createUser($username, $password)

@@ -43,7 +43,7 @@ class Cursor extends ArrayIterator
 {
     public function __construct(Array $resultset)
     {
-        $rows = [];
+        $rows = array();
         foreach ($resultset as $set) {
             foreach ($set['points'] as $row) {
                 $row    = (object)array_combine($set['columns'], $row);
