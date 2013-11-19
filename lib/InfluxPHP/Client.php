@@ -71,6 +71,18 @@ class Client extends BaseHTTP
         }, $this->get('dbs'));
     }
 
+    public function databaseExists($dbname) {
+        $dbs = $this->getDatabases();
+        $found = false;
+        foreach ($dbs as $db) {
+            if ($db->getName() == $dbname) {
+                $found = true;
+            }
+        }
+        
+        return $found;
+    }
+    
     public function getDatabase($name)
     {
         return new DB($this, $name);
