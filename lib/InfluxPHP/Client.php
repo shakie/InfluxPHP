@@ -63,6 +63,11 @@ class Client extends BaseHTTP
         return new DB($this, $name);
     }
 
+    /**
+     * Check if a database exists
+     * 
+     * @return boolean
+     */
     public function getDatabases()
     {
         $self = $this;
