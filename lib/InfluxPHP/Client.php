@@ -63,11 +63,6 @@ class Client extends BaseHTTP
         return new DB($this, $name);
     }
 
-    /**
-     * Check if a database exists
-     * 
-     * @return boolean
-     */
     public function getDatabases()
     {
         $self = $this;
@@ -76,6 +71,11 @@ class Client extends BaseHTTP
         }, $this->get('dbs'));
     }
 
+    /**
+     * Check if a database exists
+     * 
+     * @return boolean
+     */
     public function databaseExists($dbname) {
         $dbs = $this->getDatabases();
         $found = false;
