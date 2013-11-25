@@ -44,6 +44,15 @@ class BaseHTTP
     protected $user;
     protected $pass;
     protected $base;
+    protected $timePrecision = 's';
+    protected $children = array();
+
+    const SECOND        = 's';
+    const MILLISECOND   = 'm';
+    const MICROSECOND   = 'u';
+    const S     = 's';
+    const MS    = 'm';
+    const US    = 'u';
 
     protected function inherits(BaseHTTP $c)
     {
@@ -51,6 +60,8 @@ class BaseHTTP
         $this->pass   = $c->pass;
         $this->port   = $c->port;
         $this->host   = $c->host;
+        $this->timePrecision = $c->timePrecision;
+        $c->children[] = $this;
     }
 
     protected function getCurl($url, Array $args = array())
@@ -89,6 +100,29 @@ class BaseHTTP
     {
         $ch = $this->getCurl($url, $args);
         return $this->execCurl($ch, true);
+    }
+
+    public function getTimePrecision()
+    {
+        return $this->timePrecision;
+    }
+
+    public function setTimePrecision($p)
+    {
+        switch ($p) {
+        case 'm':
+        case 's':
+        case 'u':
+            $this->timePrecision = $p;
+            if ($this instanceof Client) {
+                foreach ($this->children as $children) {
+                    $children->timePrecision = $p;
+                }
+            }
+            return $this;
+        }
+        
+        throw new \InvalidArgumentException("Expecting m,s or u");
     }
 
     protected function post($url, Array $body)
