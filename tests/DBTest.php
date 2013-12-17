@@ -91,7 +91,7 @@ class DBTest extends \phpunit_framework_testcase
     public function testInvalidTimePrecision()
     {
         $client = new Client;
-        $client->SetTimePrecision([]);
+        $client->SetTimePrecision(array());
     }
 
     public function testQuery()
