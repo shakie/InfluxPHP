@@ -18,7 +18,7 @@ How to use it
 You need to create a client object.
 
 ```php
-$client = new \crodas\InfluxPHP\Client(
+$client = new \shakie\InfluxPHP\Client(
    "localhost" /*default*/,
    8086 /* default */,
    "root" /* by default */,
