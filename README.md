@@ -1,4 +1,4 @@
-InfluxDB [![Build Status](https://travis-ci.org/shakie/InfluxPHP.png?branch=master)](https://travis-ci.org/shakie/InfluxPHP)
+InfluxPHP [![Build Status](https://travis-ci.org/shakie/InfluxPHP.png?branch=master)](https://travis-ci.org/shakie/InfluxPHP)
 ========
 
 Simple PHP 5.3 client for [InfluxDB](http://influxdb.org/), an open-source, distributed, time series, events, and metrics database with no external dependencies.
