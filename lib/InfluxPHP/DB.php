@@ -32,10 +32,11 @@
   | SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE                     |
   +---------------------------------------------------------------------------------+
   | Authors: César Rodas <crodas@php.net>                                           |
+  | Authors: Shaun Rowe <mcflakie@shakie.co.uk>                                     |
   +---------------------------------------------------------------------------------+
 */
 
-namespace crodas\InfluxPHP;
+namespace shakie\InfluxPHP;
 
 class DB extends BaseHTTP
 {
@@ -85,8 +86,8 @@ class DB extends BaseHTTP
         return new Cursor($this->get('series', array('q' => $sql, 'time_precision' => $this->timePrecision)));
     }
 
-    public function createUser($username, $password)
+    public function createUser($name, $password)
     {
-        return $this->post('users', compact('username', 'password'));
+        return $this->post('users', compact('name', 'password'));
     }
 }

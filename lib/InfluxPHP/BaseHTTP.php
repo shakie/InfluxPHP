@@ -32,10 +32,11 @@
   | SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE                     |
   +---------------------------------------------------------------------------------+
   | Authors: César Rodas <crodas@php.net>                                           |
+  | Authors: Shaun Rowe <mcflakie@shakie.co.uk>                                     |
   +---------------------------------------------------------------------------------+
 */
 
-namespace crodas\InfluxPHP;
+namespace shakie\InfluxPHP;
 
 class BaseHTTP
 {

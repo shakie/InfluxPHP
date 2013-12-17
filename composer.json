@@ -1,15 +1,22 @@
 {
-    "name": "crodas/influx-php",
-    "description": "Simple client for InfluxDB",
+    "name": "shakie/influx-php53",
+    "description": "Simple PHP5.3 client for InfluxDB",
     "license": "BSD",
     "authors": [
         {
             "name": "César D. Rodas",
             "email": "crodas@php.net"
+        },
+        {
+            "name" : "Shaun Rowe",
+            "email" : "mcflakie@shakie.co.uk"
         }
     ],
     "minimum-stability": "dev",
     "autoload": {
         "classmap":["lib/"]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
     }
 }

@@ -1,6 +1,6 @@
 <?php
-use crodas\InfluxPHP\Client;
-use crodas\InfluxPHP\DB;
+use shakie\InfluxPHP\Client;
+use shakie\InfluxPHP\DB;
 
 class DBTest extends \phpunit_framework_testcase
 {
@@ -17,6 +17,16 @@ class DBTest extends \phpunit_framework_testcase
     {
         $client = new Client;
         return $client->createDatabase("test_foobar");
+    }
+    
+    /**
+     * @dependsOn testCreate
+     */
+    public function testCreateUser()
+    {
+        $client = new Client;
+        $db = $client->getDatabase('test_foobar');
+        $db->createUser('test', 'testpassword');
     }
 
     /**
@@ -97,7 +107,7 @@ class DBTest extends \phpunit_framework_testcase
     }
 
     /** @dependsOn testQuery */
-    function testDifferentTimePeriod()
+    public function testDifferentTimePeriod()
     {
         $client = new Client;
         $db = $client->test_xxx;
@@ -118,5 +128,6 @@ class DBTest extends \phpunit_framework_testcase
         }
 
         $db->drop();
-    } 
+    }
+    
 }

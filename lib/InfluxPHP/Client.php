@@ -32,10 +32,11 @@
   | SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE                     |
   +---------------------------------------------------------------------------------+
   | Authors: César Rodas <crodas@php.net>                                           |
+  | Authors: Shaun Rowe <mcflakie@shakie.co.uk>                                     |
   +---------------------------------------------------------------------------------+
 */
 
-namespace crodas\InfluxPHP;
+namespace shakie\InfluxPHP;
 
 class Client extends BaseHTTP
 {
@@ -60,15 +61,16 @@ class Client extends BaseHTTP
     public function createDatabase($name)
     {
         $this->post('db', array('name' => $name));
-        return new DB($this, $name);
+        return $this->getDatabase($name);
     }
 
     public function getDatabases()
     {
         $self = $this;
         return array_map(function($obj) use($self) {
-            return new DB($self, $obj['name']);
-        }, $this->get('dbs'));
+//            return new DB($self, $obj['name']);
+            return $self->getDatabase($obj['name']);
+        }, $this->get('db'));
     }
 
     /**
@@ -78,14 +80,9 @@ class Client extends BaseHTTP
      */
     public function databaseExists($dbname) {
         $dbs = $this->getDatabases();
-        $found = false;
         foreach ($dbs as $db) {
-            if ($db->getName() == $dbname) {
-                $found = true;
-            }
+            if ($db->getName() === $dbname) return true;
         }
-        
-        return $found;
     }
     
     public function getDatabase($name)
@@ -95,7 +92,7 @@ class Client extends BaseHTTP
 
     public function __get($name)
     {
-        return new DB($this, $name);
+        return $this->getDatabase($name);
     }
 }
 

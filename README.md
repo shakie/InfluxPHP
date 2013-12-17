@@ -1,7 +1,7 @@
-InfluxDB [![Build Status](https://travis-ci.org/crodas/InfluxPHP.png?branch=master)](https://travis-ci.org/crodas/InfluxPHP)
+InfluxDB [![Build Status](https://travis-ci.org/shakie/InfluxPHP.png?branch=master)](https://travis-ci.org/shakie/InfluxPHP)
 ========
 
-Simple PHP client for [InfluxDB](http://influxdb.org/), an open-source, distributed, time series, events, and metrics database with no external dependencies.
+Simple PHP 5.3 client for [InfluxDB](http://influxdb.org/), an open-source, distributed, time series, events, and metrics database with no external dependencies.
 
 How to install it
 -----------------
@@ -9,7 +9,7 @@ How to install it
 The easiest way is to install it via [composer](http://getcomposer.org)
 
 ```bash
-composer require crodas/influx-php:\*
+composer require shakie/influx-php53:\*
 ```
 
 How to use it
@@ -37,11 +37,11 @@ Create data is very simple.
 
 ```php
 $db = $client->foobar;
-$db->insert("some label", ['foobar' => 'bar']); // single input
-$db->insert("some label", [
-    ['foobar' => 'bar'],
-    ['foobar' => 'foo'],
-]); // multiple input, this is better :-)
+$db->insert("some label", array('foobar' => 'bar')); // single input
+$db->insert("some label", array(
+    array('foobar' => 'bar'),
+    array('foobar' => 'foo'),
+)); // multiple input, this is better :-)
 ```
 
 Now you can get the database object and start querying.
