@@ -28,6 +28,18 @@ class DBTest extends \phpunit_framework_testcase
         $db = $client->getDatabase('test_foobar');
         $db->createUser('test', 'testpassword');
     }
+    
+    /**
+     * @dependsOn testCreateUser
+     */
+    public function testGetUsers()
+    {
+        $client = new Client('localhost', '8086');
+        $db = $client->getDatabase('test_foobar');
+        $users = $db->getUsers();
+        
+        $this->assertEquals('test', $users[0]['username']);
+    }
 
     /**
      *  @dependsOn testCreateException

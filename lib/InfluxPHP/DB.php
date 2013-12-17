@@ -90,4 +90,9 @@ class DB extends BaseHTTP
     {
         return $this->post('users', compact('name', 'password'));
     }
+    
+    public function getUsers() {
+        return $this->get('users');
+    }
+    
 }
