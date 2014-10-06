@@ -1,7 +1,8 @@
 {
     "name": "shakie/influx-php53",
     "description": "Simple PHP5.3 client for InfluxDB",
-    "license": "BSD",
+    "license": "BSD-4-Clause",
+    "version": "v0.1.1",
     "authors": [
         {
             "name": "César D. Rodas",

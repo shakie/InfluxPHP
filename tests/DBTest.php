@@ -2,7 +2,7 @@
 use shakie\InfluxPHP\Client;
 use shakie\InfluxPHP\DB;
 
-class DBTest extends \phpunit_framework_testcase
+class DBTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
@@ -18,7 +18,7 @@ class DBTest extends \phpunit_framework_testcase
         $client = new Client;
         return $client->createDatabase("test_foobar");
     }
-    
+
     /**
      * @dependsOn testCreate
      */
@@ -28,7 +28,7 @@ class DBTest extends \phpunit_framework_testcase
         $db = $client->getDatabase('test_foobar');
         $db->createUser('test', 'testpassword');
     }
-    
+
     /**
      * @dependsOn testCreateUser
      */
@@ -37,7 +37,7 @@ class DBTest extends \phpunit_framework_testcase
         $client = new Client('localhost', '8086');
         $db = $client->getDatabase('test_foobar');
         $users = $db->getUsers();
-        
+
         $this->assertEquals('test', $users[0]['username']);
     }
 
@@ -85,8 +85,8 @@ class DBTest extends \phpunit_framework_testcase
         $this->assertEquals('m', $db->getTimePrecision());
     }
 
-    /** 
-     * @expectedException InvalidArgumentException 
+    /**
+     * @expectedException InvalidArgumentException
      */
     public function testInvalidTimePrecision()
     {
@@ -125,21 +125,21 @@ class DBTest extends \phpunit_framework_testcase
         $db = $client->test_xxx;
 
         $client->setTimePrecision('u');
-        foreach ($db->query("SELECT mean(karma) FROM foobar GROUP BY type") as $row) {
+        foreach ($db->query("SELECT mean(karma) FROM foobar GROUP BY type, time(1h)") as $row) {
             $this->assertTrue($row->time > time()*1000);
         }
 
         $client->setTimePrecision('m');
-        foreach ($db->query("SELECT mean(karma) FROM foobar GROUP BY type") as $row) {
+        foreach ($db->query("SELECT mean(karma) FROM foobar GROUP BY type, time(1h)") as $row) {
             $this->assertTrue($row->time < time()*10000);
         }
 
         $client->setTimePrecision('s');
-        foreach ($db->query("SELECT mean(karma) FROM foobar GROUP BY type") as $row) {
+        foreach ($db->query("SELECT mean(karma) FROM foobar GROUP BY type, time(1h)") as $row) {
             $this->assertTrue($row->time < time()+20);
         }
 
         $db->drop();
     }
-    
+
 }

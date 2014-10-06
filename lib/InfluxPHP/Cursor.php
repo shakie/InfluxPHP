@@ -42,7 +42,7 @@ use ArrayIterator;
 
 class Cursor extends ArrayIterator
 {
-    public function __construct(Array $resultset)
+    public function __construct(array $resultset)
     {
         $rows = array();
         foreach ($resultset as $set) {

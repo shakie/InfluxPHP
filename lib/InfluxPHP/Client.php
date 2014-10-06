@@ -75,7 +75,7 @@ class Client extends BaseHTTP
 
     /**
      * Check if a database exists
-     * 
+     *
      * @return boolean
      */
     public function databaseExists($dbname) {
@@ -84,7 +84,7 @@ class Client extends BaseHTTP
             if ($db->getName() === $dbname) return true;
         }
     }
-    
+
     public function getDatabase($name)
     {
         return new DB($this, $name);
