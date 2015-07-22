@@ -1,4 +1,5 @@
 <?php
+
 /*
   +---------------------------------------------------------------------------------+
   | Copyright (c) 2013 César Rodas                                                  |
@@ -34,65 +35,147 @@
   | Authors: César Rodas <crodas@php.net>                                           |
   | Authors: Shaun Rowe <mcflakie@shakie.co.uk>                                     |
   +---------------------------------------------------------------------------------+
-*/
+ */
 
-namespace shakie\InfluxPHP;
+namespace crodas\InfluxPHP;
 
 class DB extends BaseHTTP
 {
+
     protected $client;
     protected $name;
 
     public function __construct(Client $client, $name)
     {
         $this->client = $client;
-        $this->name   = $name;
+        $this->name = $name;
         $this->inherits($client);
-        $this->base   = "db/$name/";
+        $this->base = '';
     }
 
+    /**
+     * Get database name
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Drop database
+     *
+     * @return type
+     */
     public function drop()
     {
         return $this->client->deleteDatabase($this->name);
     }
 
+    /**
+     * Insert into database
+     *
+     * @param type $name
+     * @param array $data
+     * @return type
+     */
     public function insert($name, array $data)
     {
         $points = array();
-        $first  = current($data);
-        if (!is_array($first)) {
-            return $this->insert($name, array($data));
+        if (isset($data['name'])) {
+            $name = $data['name'];
+            unset($data['name']);
         }
-        $columns = array_keys($first);
-        foreach ($data as $value) {
-            $points[] = array_values($value);
+        $keys = array_keys($data);
+        if (count($keys) > 1) { // be sure that multiple entries are well-formatted
+            for ($i = 0; $i < count($keys); $i++) {
+                $elem = $data[$keys[$i]];
+                if (!isset($data[$keys[$i]]['name'])) {
+                    $data[$keys[$i]]['name'] = $name;
+                }
+            }
+        } else {
+            if (!in_array(0, $keys, true)) {
+                return $this->insert($name, array($data));
+            } elseif (!isset($data[0]['name'])) { // don't overwrite identifier name if submitted in data array
+                $data[0]['name'] = $name;
+            }
         }
-        $body = compact('name', 'columns', 'points');
-        return $this->post('series', array($body), array('time_precision' => $this->timePrecision));
+        $body = array('database' => $this->name);
+        foreach ($data as $id => $val) {
+            $data[$id]["measurement"] = $name;
+        }
+
+        $points = array('points' => $data);
+        $body = array_merge($body, $points);
+        return $this->post('write', $body, array('db' => $this->name, 'time_precision' => $this->timePrecision));
     }
 
+    /**
+     * Get first element of query resultset
+     *
+     * @param string $sql
+     * @return type
+     */
     public function first($sql)
     {
         return current($this->query($sql));
     }
 
+    /**
+     * Query database and get resultset
+     *
+     * @param string $sql
+     * @return type
+     */
     public function query($sql)
     {
-        return new Cursor($this->get('series', array('q' => $sql, 'time_precision' => $this->timePrecision)));
+        return ResultsetBuilder::buildResultSeries($this->get('query', array('db' => $this->name, 'q' => $sql, 'time_precision' => $this->timePrecision)));
     }
 
-    public function createUser($name, $password)
+    /**
+     * Create retention policy of a database
+     *
+     * @param type $name
+     * @param type $duration
+     * @param type $replication
+     * @param bool $default
+     * @return type
+     */
+    public function setRetentionPolicy($name, $duration, $replication, $default = false)
     {
-        return $this->post('users', compact('name', 'password'));
+        $query = 'CREATE RETENTION POLICY ' . $name . ' ON ' . $this->name . ' DURATION ' . $duration . ' REPLICATION ' . $replication . ($default ? ' DEFAULT' : '');
+        return $this->query($query);
     }
 
-    public function getUsers() {
-        return $this->get('users');
+    /**
+     * Modify the retention policy of a database
+     *
+     * @param type $name
+     * @param type $duration
+     * @param type $replication
+     * @param book $default
+     * @return type
+     */
+    public function modifyRetentionPolicy($name, $duration=null, $replication=null, $default = false)
+    {
+        // the parameters are optional, so don't set if null is submitted. In any other case, change the values.
+        $query = 'ALTER RETENTION POLICY ' . $name . ' ON ' . $this->name .
+                ($duration !== null ? ' DURATION ' . $duration : '') .
+                ($replication !== null ? ' REPLICATION ' . $replication : '') .
+                ($default === true ? ' DEFAULT' : '');
+        return $this->query($query);
+    }
+
+    /**
+     * Show retention policies from database
+     *
+     * @return type
+     */
+    public function getRetentionPolicies()
+    {
+        return($this->query('SHOW RETENTION POLICIES ' . $this->name));
     }
 
 }

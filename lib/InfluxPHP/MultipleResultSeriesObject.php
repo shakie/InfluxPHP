@@ -1,7 +1,8 @@
 <?php
+
 /*
   +---------------------------------------------------------------------------------+
-  | Copyright (c) 2013 César Rodas                                                  |
+  | Copyright (c) 2015 Ralf Geschke                                                |
   +---------------------------------------------------------------------------------+
   | Redistribution and use in source and binary forms, with or without              |
   | modification, are permitted provided that the following conditions are met:     |
@@ -33,109 +34,66 @@
   +---------------------------------------------------------------------------------+
   | Authors: César Rodas <crodas@php.net>                                           |
   | Authors: Shaun Rowe <mcflakie@shakie.co.uk>                                     |
+  | Authors: Ralf Geschke <ralf@kuerbis.org>                                        |
   +---------------------------------------------------------------------------------+
-*/
+ */
 
 namespace crodas\InfluxPHP;
 
-class BaseHTTP
+use ArrayIterator;
+
+class MultipleResultSeriesObject extends ArrayIterator
 {
-    protected $host;
-    protected $port;
-    protected $user;
-    protected $pass;
-    protected $base;
-    protected $timePrecision = 's';
-    protected $children = array();
 
-    const SECOND        = 's';
-    const MILLISECOND   = 'm';
-    const MICROSECOND   = 'u';
-    const S     = 's';
-    const MS    = 'm';
-    const US    = 'u';
 
-    protected function inherits(BaseHTTP $c)
+    /**
+     * Constructor
+     *
+     * @param array $rows
+     * @param type $name
+     * @param type $meta
+     */
+    public function __construct(array $rows = array())
     {
-        $this->user   = $c->user;
-        $this->pass   = $c->pass;
-        $this->port   = $c->port;
-        $this->host   = $c->host;
-        $this->timePrecision = $c->timePrecision;
-        $c->children[] = $this;
-    }
+        if ($rows) {
 
-    protected function getCurl($url, array $args = array())
-    {
-        $args = array_merge($args, array('u' => $this->user, 'p' => $this->pass));
-        $url  = "http://{$this->host}:{$this->port}/{$this->base}{$url}";
-        $url .= "?" . http_build_query($args);
-        $ch   = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        return $ch;
-    }
-
-    protected function execCurl($ch, $json = false)
-    {
-        $response = curl_exec ($ch);
-        $status   = (string)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        //$type     = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
-        if ($status[0] != 2) {
-            $response = print_r(json_decode($response), true);
-            throw new \RuntimeException($response);
+            parent::__construct($rows);
         }
-        return $json ? json_decode($response, true) : $response;
     }
 
-    protected function delete($url)
+    public function setRows(array $rows)
     {
-        $ch = $this->getCurl($url);
-        curl_setopt_array($ch, array(
-            CURLOPT_CUSTOMREQUEST => "DELETE",
-        ));
-
-        return $this->execCurl($ch);
+        parent::__construct($rows);
     }
 
-    public function getTimePrecision()
+    public function setName($name)
     {
-        return $this->timePrecision;
+        $this->name = $name;
     }
 
-    public function setTimePrecision($p)
+    public function getName()
     {
-        switch ($p) {
-        case 'm':
-        case 's':
-        case 'u':
-            $this->timePrecision = $p;
-            if ($this instanceof Client) {
-                foreach ($this->children as $children) {
-                    $children->timePrecision = $p;
-                }
-            }
-            return $this;
+        return $this->name;
+    }
+
+    public function setMeta($meta)
+    {
+        $this->meta = $meta;
+    }
+
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    public function __get($name)
+    {
+        if ($name == 'name') {
+            return $this->name;
+        } elseif (isset($this->meta[$name])) {
+            return $this->meta[$name];
         }
-
-        throw new \InvalidArgumentException("Expecting s, m or u as time precision");
-    }
-
-    protected function get($url, array $args = array())
-    {
-        $ch = $this->getCurl($url, $args);
-        return $this->execCurl($ch, true);
-    }
-
-    protected function post($url, array $body, array $args = array())
-    {
-        $ch = $this->getCurl($url, $args);
-        curl_setopt_array($ch, array(
-            CURLOPT_POST =>  1,
-            CURLOPT_POSTFIELDS => json_encode($body),
-        ));
-
-        return $this->execCurl($ch);
+        return null;
     }
 
 }
