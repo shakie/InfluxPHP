@@ -1,5 +1,5 @@
 {
-    "name": "crodas/influx-php",
+    "name": "shakie/influx-php53",
     "description": "Simple client for InfluxDB",
     "license": "BSD-4-Clause",
     "version": "v0.9.3",
